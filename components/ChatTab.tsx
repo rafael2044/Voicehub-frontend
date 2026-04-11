@@ -6,7 +6,7 @@ import { api } from "@/services/api";
 import AlertModal from "@/components/AlertModal";
 import { Send, ArrowLeft, Phone, UserCircle, Paperclip, FileText, Download, Loader2, MessageSquarePlus, X } from "lucide-react";
 
-// 1. MUDANÇA: Tiramos a função de cores daqui de dentro para não recriar a cada render
+// 1. Função de cores (mantida)
 const getAvatarColor = (name: string) => {
   const colors = ['bg-blue-500', 'bg-indigo-500', 'bg-purple-500', 'bg-pink-500', 'bg-rose-500'];
   let sum = 0;
@@ -15,8 +15,7 @@ const getAvatarColor = (name: string) => {
   return colors[sum % colors.length];
 };
 
-// 2. MUDANÇA PRINCIPAL: O SecureImage agora mora do lado de FORA do componente principal!
-// Isso impede que ele seja destruído e recriado a cada letra que você digita.
+// 2. Componente de Imagem (Atualizado com Dark Mode no Loading)
 const SecureImage = ({ path }: { path: string }) => {
   const [imgUrl, setImgUrl] = useState<string | null>(null);
 
@@ -29,7 +28,7 @@ const SecureImage = ({ path }: { path: string }) => {
       .catch((err) => console.error("Erro ao carregar imagem:", err));
   }, [path]);
 
-  if (!imgUrl) return <div className="w-48 h-32 bg-black/10 animate-pulse rounded-lg flex items-center justify-center text-sm text-gray-500">Carregando...</div>;
+  if (!imgUrl) return <div className="w-48 h-32 bg-black/10 dark:bg-white/5 animate-pulse rounded-lg flex items-center justify-center text-sm text-gray-500 dark:text-slate-400 transition-colors">Carregando...</div>;
 
   return (
     <div className="max-w-sm">
@@ -192,18 +191,18 @@ export default function ChatTab({ myId, ws, onlineUsers, unreadMessages, clearUn
   };
 
   return (
-    <div className="flex h-full bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden relative">
+    <div className="flex h-full bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 overflow-hidden relative transition-colors">
       
       {/* BARRA LATERAL (Esquerda) */}
-      <div className={`w-full md:w-80 border-r border-gray-100 flex flex-col bg-gray-50/30 ${selectedUser ? 'hidden md:flex' : 'flex'}`}>
+      <div className={`w-full md:w-80 border-r border-gray-100 dark:border-slate-700 flex flex-col bg-gray-50/30 dark:bg-slate-800/30 transition-colors ${selectedUser ? 'hidden md:flex' : 'flex'}`}>
         
-        <div className="p-4 border-b border-gray-100 bg-white flex justify-between items-center">
-          <h2 className="font-semibold text-gray-800">
+        <div className="p-4 border-b border-gray-100 dark:border-slate-700 bg-white dark:bg-slate-800 flex justify-between items-center transition-colors">
+          <h2 className="font-semibold text-gray-800 dark:text-slate-100">
             {showNewChatList ? "Contatos Online" : "Conversas"}
           </h2>
           <button 
             onClick={() => setShowNewChatList(!showNewChatList)}
-            className="p-2 text-blue-600 hover:bg-blue-50 rounded-full transition-colors"
+            className="p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-slate-700 rounded-full transition-colors"
             title={showNewChatList ? "Voltar para Conversas" : "Nova Conversa"}
           >
             {showNewChatList ? <X size={20} /> : <MessageSquarePlus size={20} />}
@@ -213,7 +212,7 @@ export default function ChatTab({ myId, ws, onlineUsers, unreadMessages, clearUn
         <div className="flex-1 overflow-y-auto p-2 space-y-1">
           {showNewChatList ? (
             onlineUsers.filter(u => String(u.id) !== String(myId)).length === 0 ? (
-              <p className="text-center text-sm text-gray-400 mt-10">Ninguém online no momento.</p>
+              <p className="text-center text-sm text-gray-400 dark:text-slate-500 mt-10">Ninguém online no momento.</p>
             ) : (
               onlineUsers.filter(u => String(u.id) !== String(myId)).map((user) => {
                 const displayName = user.name || String(user.id);
@@ -224,15 +223,15 @@ export default function ChatTab({ myId, ws, onlineUsers, unreadMessages, clearUn
                       setSelectedUser(user);
                       setShowNewChatList(false);
                     }}
-                    className="w-full flex items-center gap-3 p-3 rounded-lg transition-colors text-left hover:bg-gray-100"
+                    className="w-full flex items-center gap-3 p-3 rounded-lg transition-colors text-left hover:bg-gray-100 dark:hover:bg-slate-700/50"
                   >
                     <div className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-bold shrink-0 relative ${getAvatarColor(displayName)}`}>
                       {displayName.charAt(0).toUpperCase()}
-                      <span className="absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full border-2 border-white bg-green-500"></span>
+                      <span className="absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full border-2 border-white dark:border-slate-800 bg-green-500 transition-colors"></span>
                     </div>
                     <div className="flex-1 truncate">
-                      <span className="font-medium text-gray-800">{displayName}</span>
-                      <p className="text-xs text-green-500">Online agora</p>
+                      <span className="font-medium text-gray-800 dark:text-slate-200">{displayName}</span>
+                      <p className="text-xs text-green-500 dark:text-green-400">Online agora</p>
                     </div>
                   </button>
                 );
@@ -241,10 +240,10 @@ export default function ChatTab({ myId, ws, onlineUsers, unreadMessages, clearUn
           ) : (
             recentChats.length === 0 ? (
               <div className="flex flex-col items-center justify-center mt-12 px-4 text-center">
-                <div className="w-16 h-16 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center mb-4">
+                <div className="w-16 h-16 bg-blue-50 dark:bg-slate-800 text-blue-500 dark:text-blue-400 rounded-full flex items-center justify-center mb-4 transition-colors">
                   <MessageSquarePlus size={28} />
                 </div>
-                <p className="text-gray-500 text-sm mb-4">Você ainda não tem conversas.</p>
+                <p className="text-gray-500 dark:text-slate-400 text-sm mb-4">Você ainda não tem conversas.</p>
                 <button 
                   onClick={() => setShowNewChatList(true)}
                   className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors shadow-sm"
@@ -262,18 +261,18 @@ export default function ChatTab({ myId, ws, onlineUsers, unreadMessages, clearUn
                   <button
                     key={chat.id}
                     onClick={() => setSelectedUser({ id: String(chat.id), name: displayName, status: isOnline ? 'online' : 'offline' })}
-                    className={`w-full flex items-center gap-3 p-3 rounded-lg transition-colors text-left ${selectedUser?.id === String(chat.id) ? 'bg-blue-50' : 'hover:bg-gray-100'}`}
+                    className={`w-full flex items-center gap-3 p-3 rounded-lg transition-colors text-left ${selectedUser?.id === String(chat.id) ? 'bg-blue-50 dark:bg-slate-700' : 'hover:bg-gray-100 dark:hover:bg-slate-700/50'}`}
                   >
                     <div className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-bold shrink-0 relative ${getAvatarColor(displayName)}`}>
                       {displayName.charAt(0).toUpperCase()}
-                      <span className={`absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full border-2 border-white ${isOnline ? 'bg-green-500' : 'bg-gray-400'}`}></span>
+                      <span className={`absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full border-2 border-white dark:border-slate-800 transition-colors ${isOnline ? 'bg-green-500' : 'bg-gray-400 dark:bg-slate-500'}`}></span>
                     </div>
                     <div className="flex-1 truncate">
                       <div className="flex justify-between items-center mb-1">
-                        <span className="font-medium text-gray-800 truncate">{displayName}</span>
+                        <span className="font-medium text-gray-800 dark:text-slate-200 truncate">{displayName}</span>
                       </div>
                       <div className="flex justify-between items-center">
-                        <span className="text-xs text-gray-500 truncate max-w-[140px]">
+                        <span className="text-xs text-gray-500 dark:text-slate-400 truncate max-w-[140px]">
                           {chat.last_message}
                         </span>
                         {unreadMessages[String(chat.id)] && (
@@ -290,29 +289,30 @@ export default function ChatTab({ myId, ws, onlineUsers, unreadMessages, clearUn
       </div>
 
       {/* ÁREA DE CHAT (Direita) */}
-      <div className={`flex-1 flex flex-col bg-white absolute md:relative inset-0 z-10 ${!selectedUser ? 'hidden md:flex' : 'flex'}`}>
+      <div className={`flex-1 flex flex-col bg-white dark:bg-slate-800 absolute md:relative inset-0 z-10 transition-colors ${!selectedUser ? 'hidden md:flex' : 'flex'}`}>
         {!selectedUser ? (
-          <div className="flex-1 flex flex-col items-center justify-center text-gray-400 bg-gray-50/50">
+          <div className="flex-1 flex flex-col items-center justify-center text-gray-400 dark:text-slate-500 bg-gray-50/50 dark:bg-slate-900/50 transition-colors">
             <UserCircle size={64} className="mb-4 opacity-20" />
             <p>Selecione um contato para conversar</p>
           </div>
         ) : (
           <>
-            <div className="h-16 flex items-center justify-between px-4 border-b border-gray-100 bg-white">
+            {/* CABEÇALHO DO CHAT */}
+            <div className="h-16 flex items-center justify-between px-4 border-b border-gray-100 dark:border-slate-700 bg-white dark:bg-slate-800 transition-colors">
               <div className="flex items-center gap-3">
-                <button onClick={() => setSelectedUser(null)} className="md:hidden p-2 -ml-2 text-gray-500 hover:bg-gray-100 rounded-full">
+                <button onClick={() => setSelectedUser(null)} className="md:hidden p-2 -ml-2 text-gray-500 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-full transition-colors">
                   <ArrowLeft size={20} />
                 </button>
                 <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-bold ${getAvatarColor(selectedUser.name || String(selectedUser.id))}`}>
                   {(selectedUser.name || String(selectedUser.id)).charAt(0).toUpperCase()}
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-800">{selectedUser.name || selectedUser.id}</h3>
-                  <p className="text-xs text-gray-500">{selectedUser.status === 'online' ? 'Disponível' : 'Offline'}</p>
+                  <h3 className="font-semibold text-gray-800 dark:text-slate-100">{selectedUser.name || selectedUser.id}</h3>
+                  <p className="text-xs text-gray-500 dark:text-slate-400">{selectedUser.status === 'online' ? 'Disponível' : 'Offline'}</p>
                 </div>
               </div>
               <button 
-                className="w-10 h-10 rounded-full bg-green-50 text-green-600 flex items-center justify-center hover:bg-green-100 transition-colors disabled:opacity-50"
+                className="w-10 h-10 rounded-full bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400 flex items-center justify-center hover:bg-green-100 dark:hover:bg-green-900/50 transition-colors disabled:opacity-50"
                 title="Chamada de Voz"
                 disabled={selectedUser.status !== 'online'}
                 onClick={() => onStartCall(String(selectedUser.id))}
@@ -321,7 +321,8 @@ export default function ChatTab({ myId, ws, onlineUsers, unreadMessages, clearUn
               </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50/30">
+            {/* ÁREA DE MENSAGENS */}
+            <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50/30 dark:bg-slate-900/50 transition-colors">
               {messages.map((msg, idx) => {
                 const isMine = String(msg.sender_id) === String(myId);
                 const isSystem = msg.msg_type === "system";
@@ -329,19 +330,19 @@ export default function ChatTab({ myId, ws, onlineUsers, unreadMessages, clearUn
                 if (isSystem) {
                   return (
                     <div key={idx} className="flex justify-center my-4">
-                      <span className="bg-gray-200 text-gray-600 text-xs py-1 px-3 rounded-full font-medium">{msg.content}</span>
+                      <span className="bg-gray-200 dark:bg-slate-700 text-gray-600 dark:text-slate-300 text-xs py-1 px-3 rounded-full font-medium transition-colors">{msg.content}</span>
                     </div>
                   );
                 }
 
                 return (
                   <div key={idx} className={`flex flex-col ${isMine ? 'items-end' : 'items-start'}`}>
-                    <div className={`max-w-[75%] px-4 py-2 rounded-2xl shadow-sm ${isMine ? 'bg-blue-600 text-white rounded-br-none' : 'bg-white border border-gray-200 text-gray-800 rounded-bl-none'}`}>
+                    <div className={`max-w-[75%] px-4 py-2 rounded-2xl shadow-sm transition-colors ${isMine ? 'bg-blue-600 text-white rounded-br-none' : 'bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-800 dark:text-slate-200 rounded-bl-none'}`}>
                       {msg.msg_type === "image" ? (
                         <SecureImage path={msg.content} />
                       ) : msg.msg_type === "document" ? (
-                        <a href={process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") + msg.content} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 p-2 bg-black/10 rounded-lg hover:bg-black/20 transition-colors">
-                          <div className="bg-white p-2 rounded text-blue-600"><FileText size={24} /></div>
+                        <a href={process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") + msg.content} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 p-2 bg-black/10 dark:bg-white/5 rounded-lg hover:bg-black/20 dark:hover:bg-white/10 transition-colors">
+                          <div className="bg-white dark:bg-slate-800 p-2 rounded text-blue-600 dark:text-blue-400 transition-colors"><FileText size={24} /></div>
                           <div className="flex-1 overflow-hidden">
                             <p className="font-medium text-sm truncate">Documento Anexado</p>
                             <p className="text-xs opacity-70">Clique para baixar</p>
@@ -352,7 +353,7 @@ export default function ChatTab({ myId, ws, onlineUsers, unreadMessages, clearUn
                         <span>{msg.content}</span>
                       )}
                     </div>
-                    <span className="text-[10px] text-gray-400 mt-1 mx-1">
+                    <span className="text-[10px] text-gray-400 dark:text-slate-500 mt-1 mx-1">
                       {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </span>
                   </div>
@@ -361,13 +362,14 @@ export default function ChatTab({ myId, ws, onlineUsers, unreadMessages, clearUn
               <div ref={messagesEndRef} />
             </div>
 
-            <div className="p-4 border-t border-gray-100 bg-white">
-              <div className="flex items-center gap-2 bg-gray-100 rounded-full p-1 border border-gray-200 focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 transition-all">
+            {/* BARRA DE DIGITAÇÃO */}
+            <div className="p-4 border-t border-gray-100 dark:border-slate-700 bg-white dark:bg-slate-800 transition-colors">
+              <div className="flex items-center gap-2 bg-gray-100 dark:bg-slate-700 rounded-full p-1 border border-gray-200 dark:border-slate-600 focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 transition-all">
                 <input type="file" ref={fileInputRef} className="hidden" onChange={handleFileUpload} accept="image/*,.pdf,.doc,.docx,.xls,.xlsx" />
                 <button 
                   onClick={() => fileInputRef.current?.click()} 
                   disabled={isUploading}
-                  className="w-10 h-10 rounded-full text-gray-500 hover:bg-gray-200 hover:text-blue-600 flex items-center justify-center transition-colors shrink-0 disabled:opacity-50"
+                  className="w-10 h-10 rounded-full text-gray-500 dark:text-slate-400 hover:bg-gray-200 dark:hover:bg-slate-600 hover:text-blue-600 dark:hover:text-blue-400 flex items-center justify-center transition-colors shrink-0 disabled:opacity-50"
                   title="Anexar arquivo ou imagem"
                 >
                   {isUploading ? <Loader2 size={20} className="animate-spin" /> : <Paperclip size={20} />}
@@ -379,7 +381,7 @@ export default function ChatTab({ myId, ws, onlineUsers, unreadMessages, clearUn
                   onChange={(e) => setInputText(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
                   placeholder="Digite sua mensagem..."
-                  className="flex-1 bg-transparent px-2 py-2 outline-none text-gray-700"
+                  className="flex-1 bg-transparent px-2 py-2 outline-none text-gray-700 dark:text-slate-200"
                 />
                 
                 <button

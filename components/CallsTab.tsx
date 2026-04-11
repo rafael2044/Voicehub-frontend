@@ -48,7 +48,6 @@ export default function CallsTab({ currentUserId, onStartCall }: CallsTabProps) 
     fetchCalls();
   }, [currentUserId]);
 
-  // Função auxiliar para gerar cores baseadas no ID (como fazemos no Chat)
   const getAvatarColor = (idStr: string) => {
     const colors = ['bg-blue-500', 'bg-indigo-500', 'bg-purple-500', 'bg-pink-500', 'bg-rose-500'];
     let sum = 0;
@@ -58,7 +57,7 @@ export default function CallsTab({ currentUserId, onStartCall }: CallsTabProps) 
 
   if (isLoading) {
     return (
-      <div className="flex-1 flex items-center justify-center text-gray-500 bg-white rounded-xl shadow-sm border border-gray-100">
+      <div className="flex-1 flex items-center justify-center text-gray-500 dark:text-slate-400 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 transition-colors">
         <div className="animate-pulse flex flex-col items-center">
           <Clock size={32} className="mb-2 text-blue-400 opacity-50" />
           <p>Carregando histórico...</p>
@@ -68,11 +67,11 @@ export default function CallsTab({ currentUserId, onStartCall }: CallsTabProps) 
   }
 
   return (
-    <div className="flex flex-col h-full bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+    <div className="flex flex-col h-full bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 overflow-hidden transition-colors">
       
       {/* Cabeçalho */}
-      <div className="flex justify-between items-center p-6 border-b border-gray-100 bg-gray-50/50">
-        <h2 className="text-xl font-semibold flex items-center gap-2 text-gray-800">
+      <div className="flex justify-between items-center p-6 border-b border-gray-100 dark:border-slate-700 bg-gray-50/50 dark:bg-slate-800/50 transition-colors">
+        <h2 className="text-xl font-semibold flex items-center gap-2 text-gray-800 dark:text-slate-100">
           <Clock className="text-blue-500" size={24} />
           Histórico de Chamadas
         </h2>
@@ -81,37 +80,35 @@ export default function CallsTab({ currentUserId, onStartCall }: CallsTabProps) 
       {/* Lista de Chamadas */}
       <div className="flex-1 overflow-y-auto p-4 md:p-6">
         {calls.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-full text-gray-400">
+          <div className="flex flex-col items-center justify-center h-full text-gray-400 dark:text-slate-500 transition-colors">
             <SearchX size={48} className="mb-4 opacity-30" />
             <p>Nenhuma chamada registrada ainda.</p>
           </div>
         ) : (
           <div className="space-y-3 max-w-4xl mx-auto">
             {calls.map((call) => {
-              // Lógica para definir os papéis na chamada
               const isOutgoing = String(call.caller_id) === String(currentUserId);
               const partnerName = String(isOutgoing ? call.callee_name : call.caller_name);
               const isMissed = call.status === "missed";
 
-              // Configuração visual do ícone
               let CallIcon = PhoneIncoming;
-              let iconColor = "text-green-500";
+              let iconColor = "text-green-500 dark:text-green-400";
               let statusText = "Recebida";
 
               if (isMissed) {
                 CallIcon = PhoneMissed;
-                iconColor = "text-red-500";
+                iconColor = "text-red-500 dark:text-red-400";
                 statusText = isOutgoing ? "Não Atendida" : "Perdida";
               } else if (isOutgoing) {
                 CallIcon = PhoneOutgoing;
-                iconColor = "text-blue-500";
+                iconColor = "text-blue-500 dark:text-blue-400";
                 statusText = "Efetuada";
               }
 
               const startDate = new Date(call.start_time);
 
               return (
-                <div key={call.id} className="flex items-center justify-between p-4 rounded-xl border border-gray-100 hover:border-blue-100 hover:bg-blue-50/30 transition-colors bg-white shadow-sm">
+                <div key={call.id} className="flex items-center justify-between p-4 rounded-xl border border-gray-100 dark:border-slate-700 hover:border-blue-100 dark:hover:border-slate-600 hover:bg-blue-50/30 dark:hover:bg-slate-700/50 transition-colors bg-white dark:bg-slate-800 shadow-sm">
                   
                   {/* Info Principal */}
                   <div className="flex items-center gap-4">
@@ -120,13 +117,13 @@ export default function CallsTab({ currentUserId, onStartCall }: CallsTabProps) 
                     </div>
                     
                     <div>
-                      <h3 className="font-semibold text-gray-800 text-lg">{partnerName}</h3>
+                      <h3 className="font-semibold text-gray-800 dark:text-slate-200 text-lg transition-colors">{partnerName}</h3>
                       <div className="flex items-center gap-3 text-sm mt-0.5">
-                        <span className={`flex items-center gap-1 font-medium ${iconColor}`}>
+                        <span className={`flex items-center gap-1 font-medium transition-colors ${iconColor}`}>
                           <CallIcon size={14} />
                           {statusText}
                         </span>
-                        <span className="text-gray-400 flex items-center gap-1">
+                        <span className="text-gray-400 dark:text-slate-500 flex items-center gap-1 transition-colors">
                           <Calendar size={12} />
                           {startDate.toLocaleDateString('pt-BR')} às {startDate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
                         </span>
@@ -137,14 +134,14 @@ export default function CallsTab({ currentUserId, onStartCall }: CallsTabProps) 
                   {/* Duração e Ações */}
                   <div className="flex items-center gap-6">
                     <div className="text-right hidden sm:block">
-                      <p className="text-sm font-semibold text-gray-700">{isMissed ? '--:--' : call.duration}</p>
-                      <p className="text-xs text-gray-400">Duração</p>
+                      <p className="text-sm font-semibold text-gray-700 dark:text-slate-300 transition-colors">{isMissed ? '--:--' : call.duration}</p>
+                      <p className="text-xs text-gray-400 dark:text-slate-500 transition-colors">Duração</p>
                     </div>
                     
                     {/* Botão de Retornar Ligação */}
                     <button 
                       onClick={() => onStartCall(partnerName)}
-                      className="w-10 h-10 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center hover:bg-green-100 hover:text-green-600 transition-colors shadow-sm"
+                      className="w-10 h-10 rounded-full bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-slate-300 flex items-center justify-center hover:bg-green-100 dark:hover:bg-green-900/30 hover:text-green-600 dark:hover:text-green-400 transition-colors shadow-sm"
                       title="Ligar novamente"
                     >
                       <Phone size={18} />

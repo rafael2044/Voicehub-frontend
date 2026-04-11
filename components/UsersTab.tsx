@@ -94,9 +94,11 @@ export default function UsersTab() {
   };
 
   return (
-    <div className="flex flex-col h-full bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden relative">
-      <div className="flex justify-between items-center p-6 border-b border-gray-100 bg-gray-50/50">
-        <h2 className="text-xl font-semibold flex items-center gap-2 text-gray-800">
+    <div className="flex flex-col h-full bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 overflow-hidden relative transition-colors">
+      
+      {/* CABEÇALHO */}
+      <div className="flex justify-between items-center p-6 border-b border-gray-100 dark:border-slate-700 bg-gray-50/50 dark:bg-slate-800/50 transition-colors">
+        <h2 className="text-xl font-semibold flex items-center gap-2 text-gray-800 dark:text-slate-100">
           <Users className="text-blue-500" size={24} />
           Gestão de Usuários
         </h2>
@@ -108,14 +110,15 @@ export default function UsersTab() {
         </button>
       </div>
 
+      {/* TABELA DE USUÁRIOS */}
       <div className="flex-1 overflow-y-auto p-6">
         {isLoading ? (
-          <p className="text-center text-gray-400 mt-10">Carregando usuários...</p>
+          <p className="text-center text-gray-400 dark:text-slate-500 mt-10">Carregando usuários...</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-gray-50 text-gray-500 text-sm border-b border-gray-200">
+                <tr className="bg-gray-50 dark:bg-slate-900/50 text-gray-500 dark:text-slate-400 text-sm border-b border-gray-200 dark:border-slate-700 transition-colors">
                   <th className="p-4 font-medium">Nome</th>
                   <th className="p-4 font-medium">Email</th>
                   <th className="p-4 font-medium">Nível de Acesso</th>
@@ -125,30 +128,34 @@ export default function UsersTab() {
               </thead>
               <tbody>
                 {users.map(user => (
-                  <tr key={user.id} className="border-b border-gray-100 hover:bg-gray-50/50 transition-colors">
-                    <td className="p-4 font-medium text-gray-800">{user.name}</td>
-                    <td className="p-4 text-gray-600">{user.email}</td>
+                  <tr key={user.id} className="border-b border-gray-100 dark:border-slate-700/50 hover:bg-gray-50/50 dark:hover:bg-slate-700/30 transition-colors">
+                    <td className="p-4 font-medium text-gray-800 dark:text-slate-200">{user.name}</td>
+                    <td className="p-4 text-gray-600 dark:text-slate-400">{user.email}</td>
                     <td className="p-4">
-                      <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${user.role === 'user_admin' ? 'bg-purple-100 text-purple-700' : 'bg-gray-100 text-gray-700'}`}>
+                      <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${
+                        user.role === 'user_admin' 
+                          ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400' 
+                          : 'bg-gray-100 text-gray-700 dark:bg-slate-700 dark:text-slate-300'
+                      }`}>
                         {user.role === 'user_admin' ? <Shield size={12} /> : <UserIcon size={12} />}
                         {user.role === 'user_admin' ? 'Administrador' : 'Usuário Padrão'}
                       </span>
                     </td>
                     <td className="p-4">
                       {user.is_active ? (
-                        <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">Ativo</span>
+                        <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">Ativo</span>
                       ) : (
-                        <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-red-100 text-red-700">Desativado</span>
+                        <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400">Desativado</span>
                       )}
                     </td>
                     <td className="p-4 flex items-center justify-end gap-2">
-                      <button onClick={() => openEditModal(user)} className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
+                      <button onClick={() => openEditModal(user)} className="p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-colors">
                         <Edit size={18} />
                       </button>
                       <button 
                         onClick={() => setUserToDelete(user)}
                         disabled={!user.is_active}
-                        className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                        className="p-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
                         title={user.is_active ? "Desativar Usuário" : "Usuário já desativado"}
                       >
                         <Trash2 size={18} />
@@ -162,50 +169,55 @@ export default function UsersTab() {
         )}
       </div>
 
-      {/* Modal de Formulário (Criar/Editar) */}
+      {/* MODAL DE FORMULÁRIO (Criar/Editar) */}
       {isFormOpen && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-in zoom-in-95">
-            <div className="p-6 border-b border-gray-100">
-              <h3 className="text-xl font-bold text-gray-800">{editingUser ? "Editar Usuário" : "Novo Usuário"}</h3>
+        <div className="fixed inset-0 bg-black/40 dark:bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-in zoom-in-95 border border-transparent dark:border-slate-700 transition-colors">
+            <div className="p-6 border-b border-gray-100 dark:border-slate-700">
+              <h3 className="text-xl font-bold text-gray-800 dark:text-white">{editingUser ? "Editar Usuário" : "Novo Usuário"}</h3>
             </div>
+            
             <form onSubmit={handleSaveUser} className="p-6 space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Nome Completo</label>
-                <input required type="text" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} className="w-full px-4 py-2 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-blue-500" />
+                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Nome Completo</label>
+                <input required type="text" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} className="w-full px-4 py-2 border border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-white rounded-lg outline-none focus:ring-2 focus:ring-blue-500 transition-colors" />
               </div>
+              
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">E-mail</label>
-                <input required type="email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} className="w-full px-4 py-2 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-blue-500" />
+                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">E-mail</label>
+                <input required type="email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} className="w-full px-4 py-2 border border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-white rounded-lg outline-none focus:ring-2 focus:ring-blue-500 transition-colors" />
               </div>
+              
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Senha {editingUser && <span className="text-xs text-gray-400 font-normal">(Deixe em branco para não alterar)</span>}
+                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
+                  Senha {editingUser && <span className="text-xs text-gray-400 dark:text-slate-500 font-normal">(Deixe em branco para não alterar)</span>}
                 </label>
-                <input type="password" required={!editingUser} value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} className="w-full px-4 py-2 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-blue-500" />
+                <input type="password" required={!editingUser} value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} className="w-full px-4 py-2 border border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-white rounded-lg outline-none focus:ring-2 focus:ring-blue-500 transition-colors" />
               </div>
+              
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Nível de Acesso</label>
-                <select value={formData.role} onChange={e => setFormData({...formData, role: e.target.value})} className="w-full px-4 py-2 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 bg-white">
+                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Nível de Acesso</label>
+                <select value={formData.role} onChange={e => setFormData({...formData, role: e.target.value})} className="w-full px-4 py-2 border border-gray-200 dark:border-slate-600 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-700 text-gray-900 dark:text-white transition-colors">
                   <option value="user_default">Usuário Padrão</option>
                   <option value="user_admin">Administrador</option>
                 </select>
               </div>
-                <div className="flex items-center gap-2 pt-2">
-                    <input 
-                        type="checkbox" 
-                        id="isActiveCheckbox"
-                        checked={formData.is_active} 
-                        onChange={e => setFormData({...formData, is_active: e.target.checked})} 
-                        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 cursor-pointer"
-                    />
-                    <label htmlFor="isActiveCheckbox" className="text-sm font-medium text-gray-700 cursor-pointer select-none">
-                        Conta Ativa (Permitir acesso ao sistema)
-                    </label>
-                </div>
+              
+              <div className="flex items-center gap-2 pt-2">
+                <input 
+                  type="checkbox" 
+                  id="isActiveCheckbox"
+                  checked={formData.is_active} 
+                  onChange={e => setFormData({...formData, is_active: e.target.checked})} 
+                  className="w-4 h-4 text-blue-600 bg-gray-100 dark:bg-slate-700 border-gray-300 dark:border-slate-600 rounded focus:ring-blue-500 cursor-pointer"
+                />
+                <label htmlFor="isActiveCheckbox" className="text-sm font-medium text-gray-700 dark:text-slate-300 cursor-pointer select-none">
+                  Conta Ativa (Permitir acesso ao sistema)
+                </label>
+              </div>
 
               <div className="pt-4 flex gap-3">
-                <button type="button" onClick={() => setIsFormOpen(false)} className="flex-1 py-2 rounded-lg font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 transition-colors">Cancelar</button>
+                <button type="button" onClick={() => setIsFormOpen(false)} className="flex-1 py-2 rounded-lg font-medium text-gray-700 dark:text-slate-300 bg-gray-100 dark:bg-slate-700 hover:bg-gray-200 dark:hover:bg-slate-600 transition-colors">Cancelar</button>
                 <button type="submit" className="flex-1 py-2 rounded-lg font-medium text-white bg-blue-600 hover:bg-blue-700 transition-colors">Salvar</button>
               </div>
             </form>

@@ -5,10 +5,12 @@
   "scripts": {
     "dev": "next dev -H 0.0.0.0",
     "build": "next build",
-    "start": "next start",
+    "start": "next build & next start",
     "lint": "eslint"
   },
   "dependencies": {
+    "@tiptap/extension-image": "^3.22.3",
+    "@tiptap/extension-link": "^3.22.3",
     "@tiptap/pm": "^3.22.3",
     "@tiptap/react": "^3.22.3",
     "@tiptap/starter-kit": "^3.22.3",

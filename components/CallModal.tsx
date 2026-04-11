@@ -5,7 +5,7 @@ import { Phone, PhoneOff, Mic, MicOff } from "lucide-react";
 
 interface CallModalProps {
   status: CallStatus;
-  partnerName: string | null; // MUDANÇA: Agora esperamos o Nome e não o ID
+  partnerName: string | null;
   duration: string;
   isMuted: boolean;
   onAccept: () => void;
@@ -24,11 +24,11 @@ export default function CallModal({ status, partnerName, duration, isMuted, onAc
   };
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in">
-      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden flex flex-col items-center py-10 px-6">
+    <div className="fixed inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-sm z-[999] flex items-center justify-center p-4 animate-in fade-in transition-colors">
+      <div className="bg-white dark:bg-slate-800 border border-transparent dark:border-slate-700 rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden flex flex-col items-center py-10 px-6 transition-colors">
         
         {/* Título Baseado no Status */}
-        <h2 className="text-gray-500 font-medium mb-8">
+        <h2 className="text-gray-500 dark:text-slate-400 font-medium mb-8 transition-colors">
           {status === "calling" && "Chamando..."}
           {status === "incoming" && "Chamada de Voz Recebida"}
           {status === "active" && "Em Chamada"}
@@ -38,13 +38,13 @@ export default function CallModal({ status, partnerName, duration, isMuted, onAc
         <div className={`w-28 h-28 rounded-full flex items-center justify-center text-white text-4xl font-bold shadow-lg mb-4 ${getAvatarColor(partnerName)}`}>
           {partnerName.charAt(0).toUpperCase()}
         </div>
-        <h3 className="text-2xl font-bold text-gray-800 mb-2">{partnerName}</h3>
+        <h3 className="text-2xl font-bold text-gray-800 dark:text-white mb-2 transition-colors text-center">{partnerName}</h3>
         
         {/* Duração ou Status Animado */}
         {status === "active" ? (
-          <div className="text-3xl font-mono text-gray-700 font-semibold my-4">{duration}</div>
+          <div className="text-3xl font-mono text-gray-700 dark:text-slate-200 font-semibold my-4 transition-colors">{duration}</div>
         ) : (
-          <div className="text-blue-500 font-medium animate-pulse my-4">
+          <div className="text-blue-500 dark:text-blue-400 font-medium animate-pulse my-4 transition-colors">
             {status === "calling" ? "Aguardando resposta..." : "Tocando..."}
           </div>
         )}
@@ -54,7 +54,12 @@ export default function CallModal({ status, partnerName, duration, isMuted, onAc
           {status === "active" && (
             <button 
               onClick={onMuteToggle}
-              className={`w-14 h-14 rounded-full flex items-center justify-center transition-colors ${isMuted ? 'bg-gray-800 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+              className={`w-14 h-14 rounded-full flex items-center justify-center transition-all shadow-sm ${
+                isMuted 
+                  ? 'bg-gray-800 dark:bg-slate-900 text-white dark:text-slate-300' 
+                  : 'bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-slate-300 hover:bg-gray-200 dark:hover:bg-slate-600'
+              }`}
+              title={isMuted ? "Ativar Microfone" : "Silenciar Microfone"}
             >
               {isMuted ? <MicOff size={24} /> : <Mic size={24} />}
             </button>
@@ -63,7 +68,8 @@ export default function CallModal({ status, partnerName, duration, isMuted, onAc
           {status === "incoming" && (
             <button 
               onClick={onAccept}
-              className="w-16 h-16 rounded-full bg-green-500 hover:bg-green-600 text-white flex items-center justify-center shadow-lg hover:scale-105 transition-all"
+              className="w-16 h-16 rounded-full bg-green-500 dark:bg-green-600 hover:bg-green-600 dark:hover:bg-green-500 text-white flex items-center justify-center shadow-lg hover:scale-105 transition-all"
+              title="Atender Chamada"
             >
               <Phone size={28} className="animate-bounce" />
             </button>
@@ -71,7 +77,8 @@ export default function CallModal({ status, partnerName, duration, isMuted, onAc
 
           <button 
             onClick={() => onEnd()}
-            className="w-16 h-16 rounded-full bg-red-500 hover:bg-red-600 text-white flex items-center justify-center shadow-lg hover:scale-105 transition-all"
+            className="w-16 h-16 rounded-full bg-red-500 dark:bg-red-600 hover:bg-red-600 dark:hover:bg-red-500 text-white flex items-center justify-center shadow-lg hover:scale-105 transition-all"
+            title="Encerrar/Recusar"
           >
             <PhoneOff size={28} />
           </button>
