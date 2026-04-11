@@ -132,7 +132,7 @@ export default function MuralTab({ currentUser }: { currentUser: UserData }) {
         </h2>
         
         {/* MAGIA DA AUTENTICAÇÃO: Só exibe o botão se for Administrador */}
-        {currentUser.role === "user_default" && (
+        {currentUser.role === "user_admin" && (
           <button
             onClick={() => {
               setIsEditing(!isEditing);
